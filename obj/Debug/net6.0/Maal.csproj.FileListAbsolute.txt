@@ -1,0 +1,8 @@
+\\Mac\Home\Documents\Maal\obj\Debug\net6.0\Maal.csproj.AssemblyReference.cache
+\\Mac\Home\Documents\Maal\obj\Debug\net6.0\Maal.GeneratedMSBuildEditorConfig.editorconfig
+\\Mac\Home\Documents\Maal\obj\Debug\net6.0\Maal.AssemblyInfoInputs.cache
+\\Mac\Home\Documents\Maal\obj\Debug\net6.0\Maal.AssemblyInfo.cs
+\\Mac\Home\Documents\Maal\obj\Debug\net6.0\Maal.csproj.CoreCompileInputs.cache
+\\Mac\Home\Documents\Maal\obj\Debug\net6.0\Maal.MvcApplicationPartsAssemblyInfo.cache
+\\Mac\Home\Documents\Maal\obj\Debug\net6.0\Maal.RazorAssemblyInfo.cache
+\\Mac\Home\Documents\Maal\obj\Debug\net6.0\Maal.RazorAssemblyInfo.cs
