@@ -1,0 +1,45 @@
+﻿@page
+@model RoundsModel
+@{
+    ViewData["Title"] = "Game rounds";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>A brief history of your game rounds.</p>
+<table class="table table-stripped table-hover table-dark">
+    <thead>
+        <tr>
+            <th>#</th>
+            @foreach (var player in Model.Players)
+            {
+                <th>@player.Name</th>
+            }
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var round in Model.Rounds)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => round.Number)
+                </td>
+                @foreach (var player in Model.Players)
+                {
+                    <td>
+                        @{var roundPlayer = round.RoundPlayers.FirstOrDefault(x => x.PlayerId == player.Id);}
+                        @if (roundPlayer != null)
+                        {
+                            <span>@Html.DisplayFor(modelItem => roundPlayer.Points)</span>
+                            <span class="fw-lighter"> (@Html.DisplayFor(modelItem => roundPlayer.Maal))</span>
+                            @if(roundPlayer.Seen){<span class="badge rounded-pill bg-success m-1">s</span>}
+                            @if(roundPlayer.Dubli){<span class="badge rounded-pill bg-info m-1">d</span>}
+                            @if((round.FoulPlayerId ?? 0) == roundPlayer.Player.Id){<span class="badge rounded-pill bg-danger m-1">f</span>}
+                        }
+                    </td>
+                }
+                <td>X</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -20,12 +20,24 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/user/Documents/Maal/Pages/Game.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvR2FtZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/user/Documents/Maal/Pages/Games.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvR2FtZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/user/Documents/Maal/Pages/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/user/Documents/Maal/Pages/Privacy.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUHJpdmFjeS5jc2h0bWw=
+[/Users/user/Documents/Maal/Pages/NotFound.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTm90Rm91bmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/user/Documents/Maal/Pages/Rounds.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUm91bmRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/user/Documents/Maal/Pages/Shared/_ValidationScriptsPartial.cshtml]

@@ -5,18 +5,27 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <p>@ViewData["DbPath"]</p>
-    @foreach (var item in Model.Players) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-        </tr>
-}
-    <button>New Game</button>
+    <h1 class="display-4">Maal</h1>
+    <p><em>Marriage card game points calculator</em></p>
+    <div>
+        <label>Current game:</label>
+        @Html.DisplayFor(x => x.CurrentGame.Name)
+    </div>
+    <div class="row">
+        <div class="col">
+            <form asp-page-handler="continue" method="post">
+                <button class="btn btn-dark no-wrap">New round</button>
+            </form>
+        </div>
+        <div class="col">
+            <form asp-page-handler="new" method="post">
+                <button class="btn btn-dark no-wrap">New game</button>
+            </form>
+        </div>
+        <div class="col">
+            <form asp-page-handler="view" method="post">
+                <button class="btn btn-dark no-wrap">View</button>
+            </form>
+        </div>
+    </div>
 </div>

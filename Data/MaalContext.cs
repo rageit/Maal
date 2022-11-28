@@ -6,7 +6,8 @@ public class MaalContext : DbContext
 {
     public string DbPath { get; }
     public DbSet<Game> Games { get; set; } = default!;
-    public DbSet<GameSession> GameSessions { get; set; } = default!;
+    public DbSet<Round> Rounds { get; set; } = default!;
+    public DbSet<RoundPlayer> RoundPlayers { get; set; } = default!;
     public DbSet<Player> Players { get; set; } = default!;
 
     public MaalContext(DbContextOptions<MaalContext> options, IAppSettingsProvider appSettingsProvider)

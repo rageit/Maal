@@ -1,0 +1,28 @@
+﻿@page
+@model GamesModel
+@{
+    ViewData["Title"] = "Games";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>A brief history of your games.</p>
+<table class="table table-stripped table-hover table-dark">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Games) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <a asp-page="./Continue" asp-route-id="@item.Id">Continue</a>
+            </td>
+        </tr>
+}
+</tbody>
+</table>

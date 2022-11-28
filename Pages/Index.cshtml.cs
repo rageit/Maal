@@ -12,7 +12,7 @@ public class IndexModel : PageModel
     private MaalContext _context;
 
     [BindProperty]
-    public List<Player> Players { get; set; } = default!;
+    public Game CurrentGame { get; set; } = default!;
 
     public IndexModel(ILogger<IndexModel> logger, MaalContext context, IConfiguration configuration)
     {
@@ -23,7 +23,6 @@ public class IndexModel : PageModel
 
     public void OnGet()
     {
-        ViewData["DbPath"] = _context.DbPath;
-        Players = _context.Players.ToList();
+        CurrentGame = _context.Games.OrderByDescending(g => g.TimeStamp).FirstOrDefault();
     }
 }

@@ -4,8 +4,10 @@ namespace Maal.Models;
 public class Game
 {
     public int Id { get; set; }
-    public List<GamePlayer> GamePlayers { get; set; } = new List<GamePlayer>();
-    public int Round { get; set; }
-    public DateTime GameTime { get; set; }
+    public string Name { get; set; } = default!;
+    public List<Round> Rounds { get; set; } = new List<Round>();
 
+    [Display(Name = "Date")]
+    [DisplayFormat(DataFormatString = "{0:d}")]
+    public DateTime TimeStamp { get; set; }
 }
