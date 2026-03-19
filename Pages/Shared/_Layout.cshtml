@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="~/icons/icon-192.png" />
     <link rel="manifest" href="~/manifest.json" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    @if (!ViewData.ContainsKey("HideAds") || !(bool)ViewData["HideAds"]!)
+    @if (ViewData["HideAds"] is not true)
     {
         <!-- Google AdSense: Replace ca-pub-XXXXXXXXXXXXXXXX with your real publisher ID -->
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
@@ -29,7 +29,7 @@
         </nav>
     </header>
 
-    @if (!ViewData.ContainsKey("HideAds") || !(bool)ViewData["HideAds"]!)
+    @if (ViewData["HideAds"] is not true)
     {
         <div class="ad-banner ad-banner-top">
             <!-- Top banner ad: Replace data-ad-slot with your real ad unit ID -->
@@ -47,7 +47,7 @@
         @RenderBody()
     </div>
 
-    @if (!ViewData.ContainsKey("HideAds") || !(bool)ViewData["HideAds"]!)
+    @if (ViewData["HideAds"] is not true)
     {
         <div class="ad-banner ad-banner-bottom">
             <!-- Bottom banner ad: Replace data-ad-slot with your real ad unit ID -->
