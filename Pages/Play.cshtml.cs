@@ -127,11 +127,9 @@ public class PlayModel : PageModel
             .OrderBy(p => p.Id)
             .ToList();
 
-        NextRoundNumber = _context.Rounds
+        NextRoundNumber = (_context.Rounds
             .Where(r => r.GameId == GameId)
-            .Select(r => r.Number)
-            .DefaultIfEmpty(0)
-            .Max() + 1;
+            .Max(r => (int?)r.Number) ?? 0) + 1;
 
         return Page();
     }
