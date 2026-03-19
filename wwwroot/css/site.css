@@ -84,13 +84,13 @@ body {
 }
 
 .app-nav a.app-nav-new {
-    background: var(--accent);
+    background: var(--success);
     color: white;
     font-weight: 600;
 }
 
 .app-nav a.app-nav-new:hover {
-    background: var(--accent-light);
+    background: #00d6a4;
 }
 
 .app-content {
