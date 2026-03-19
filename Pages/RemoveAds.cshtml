@@ -1,0 +1,55 @@
+@page
+@model RemoveAdsModel
+@{
+    ViewData["Title"] = "Remove Ads";
+}
+
+<div class="hero" style="padding: 24px 0;">
+    <h1 class="hero-title" style="font-size: 1.8rem;">Remove Ads</h1>
+    <p class="hero-subtitle">Enjoy an ad-free experience</p>
+</div>
+
+@if (Model.IsAdFree)
+{
+    <div class="card text-center">
+        <div style="font-size: 2.5rem; margin-bottom: 12px;">&#10003;</div>
+        <div class="card-title" style="color: var(--success);">You're Ad-Free!</div>
+        <p class="card-subtitle" style="margin-top: 4px;">
+            Thank you for your purchase. You will no longer see ads.
+        </p>
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-title text-center">Go Ad-Free for $1.99</div>
+        <p class="card-subtitle text-center" style="margin-top: 4px;">
+            One-time purchase. No subscription.
+        </p>
+
+        <div class="divider"></div>
+
+        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 16px;">
+            <div class="d-flex align-center gap-1 mb-1">
+                <span style="color: var(--success);">&#10003;</span>
+                <span>Remove all banner ads</span>
+            </div>
+            <div class="d-flex align-center gap-1 mb-1">
+                <span style="color: var(--success);">&#10003;</span>
+                <span>Cleaner, distraction-free interface</span>
+            </div>
+            <div class="d-flex align-center gap-1 mb-1">
+                <span style="color: var(--success);">&#10003;</span>
+                <span>Support the developer</span>
+            </div>
+        </div>
+
+        <form method="post">
+            <button type="submit" class="btn btn-success btn-block btn-lg">
+                Purchase for $1.99
+            </button>
+        </form>
+    </div>
+}
+
+<a asp-page="/Index" class="btn btn-secondary btn-block mt-1">Back to Home</a>
