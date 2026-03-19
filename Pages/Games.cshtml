@@ -1,28 +1,49 @@
-﻿@page
+@page
 @model GamesModel
 @{
-    ViewData["Title"] = "Games";
+    ViewData["Title"] = "Game History";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>A brief history of your games.</p>
-<table class="table table-stripped table-hover table-dark">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Games) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                <a asp-page="./Continue" asp-route-id="@item.Id">Continue</a>
-            </td>
-        </tr>
+<h1 class="card-title" style="font-size:1.4rem; margin-bottom:4px;">Game History</h1>
+<p class="text-muted mb-2" style="font-size:0.9rem;">All your Marriage card game sessions</p>
+
+@if (Model.Games.Any())
+{
+    @foreach (var game in Model.Games)
+    {
+        var players = Model.GamePlayers.GetValueOrDefault(game.Id, new List<string>());
+        var rounds = Model.RoundCounts.GetValueOrDefault(game.Id, 0);
+        <div class="game-item" style="display:flex; flex-direction:column; align-items:stretch;">
+            <a asp-page="/Scoreboard" asp-route-gameId="@game.Id" style="text-decoration:none; color:inherit; display:flex; align-items:center; justify-content:space-between; width:100%;">
+                <div class="game-item-info">
+                    <div class="game-name">@game.Name</div>
+                    <div class="game-meta">
+                        @game.TimeStamp.ToString("MMM dd, yyyy") &middot;
+                        @rounds round@(rounds != 1 ? "s" : "") &middot;
+                        @string.Join(", ", players)
+                    </div>
+                </div>
+                <div class="game-item-arrow">&#8250;</div>
+            </a>
+            <div style="margin-top:10px; display:flex; gap:8px;">
+                <a asp-page="/Play" asp-route-gameId="@game.Id" class="btn btn-sm btn-primary flex-1">Continue</a>
+                <form method="post" asp-page-handler="Delete" style="flex:0;">
+                    <input type="hidden" name="gameId" value="@game.Id" />
+                    <button type="submit" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this game and all its data?')">Delete</button>
+                </form>
+            </div>
+        </div>
+    }
 }
-</tbody>
-</table>
+else
+{
+    <div class="empty-state">
+        <div class="empty-state-icon">&#9827;</div>
+        <div class="empty-state-title">No games yet</div>
+        <p class="empty-state-text">Start your first game to see it here</p>
+    </div>
+}
+
+<a asp-page="/NewGame" class="btn btn-success btn-block btn-lg mt-2">New Game</a>
+<a asp-page="/Index" class="btn btn-secondary btn-block mt-1">Back to Home</a>

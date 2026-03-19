@@ -1,31 +1,69 @@
-﻿@page
+@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Maal</h1>
-    <p><em>Marriage card game points calculator</em></p>
-    <div>
-        <label>Current game:</label>
-        @Html.DisplayFor(x => x.CurrentGame.Name)
-    </div>
-    <div class="row">
-        <div class="col">
-            <form asp-page-handler="continue" method="post">
-                <button class="btn btn-dark no-wrap">New round</button>
-            </form>
-        </div>
-        <div class="col">
-            <form asp-page-handler="new" method="post">
-                <button class="btn btn-dark no-wrap">New game</button>
-            </form>
-        </div>
-        <div class="col">
-            <form asp-page-handler="view" method="post">
-                <button class="btn btn-dark no-wrap">View</button>
-            </form>
-        </div>
-    </div>
+<div class="hero">
+    <h1 class="hero-title">MAAL</h1>
+    <p class="hero-subtitle">Marriage Card Game Point Tracker</p>
 </div>
+
+@if (Model.CurrentGame != null)
+{
+    <div class="card">
+        <div class="d-flex align-center justify-between mb-1">
+            <div class="card-title" style="margin:0">@Model.CurrentGame.Name</div>
+            <span class="badge badge-maal">@Model.TotalRounds rounds</span>
+        </div>
+        <p class="card-subtitle">@Model.CurrentGame.TimeStamp.ToString("MMM dd, yyyy")</p>
+
+        @if (Model.Players.Any())
+        {
+            @foreach (var player in Model.Players.OrderByDescending(p => Model.PlayerTotals.GetValueOrDefault(p.Id, 0)))
+            {
+                var total = Model.PlayerTotals.GetValueOrDefault(player.Id, 0);
+                var rank = Model.Players
+                    .OrderByDescending(p => Model.PlayerTotals.GetValueOrDefault(p.Id, 0))
+                    .ToList().IndexOf(player) + 1;
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank @(rank == 1 ? "rank-1" : rank == 2 ? "rank-2" : rank == 3 ? "rank-3" : "rank-other")">
+                        @rank
+                    </div>
+                    <div class="leaderboard-name">@player.Name</div>
+                    <div class="leaderboard-points @(total > 0 ? "points-positive" : total < 0 ? "points-negative" : "points-zero")">
+                        @(total > 0 ? "+" : "")@total
+                    </div>
+                </div>
+            }
+        }
+
+        <div class="btn-group mt-2">
+            <a asp-page="/Play" asp-route-gameId="@Model.CurrentGame.Id" class="btn btn-primary">
+                + New Round
+            </a>
+            <a asp-page="/Scoreboard" asp-route-gameId="@Model.CurrentGame.Id" class="btn btn-secondary">
+                Scoreboard
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <div class="empty-state-icon">&#9824;</div>
+        <div class="empty-state-title">No games yet</div>
+        <p class="empty-state-text">Start a new game to begin tracking points</p>
+    </div>
+}
+
+<a asp-page="/NewGame" class="btn btn-success btn-block btn-lg mt-2">
+    New Game
+</a>
+
+@if (Model.CurrentGame != null)
+{
+    <a asp-page="/Games" class="btn btn-secondary btn-block mt-1">
+        View All Games
+    </a>
+}

@@ -1,0 +1,136 @@
+@page
+@model ScoreboardModel
+@{
+    ViewData["Title"] = Model.Game?.Name ?? "Scoreboard";
+}
+
+@{
+    var topPlayerHeader = Model.Players
+        .OrderByDescending(p => Model.PlayerTotals.GetValueOrDefault(p.Id, 0))
+        .FirstOrDefault();
+    var topPointsHeader = topPlayerHeader != null ? Model.PlayerTotals.GetValueOrDefault(topPlayerHeader.Id, 0) : 0;
+}
+<div class="d-flex align-center justify-between mb-1">
+    <h1 class="card-title" style="font-size:1.3rem; margin:0;">@Model.Game?.Name</h1>
+    <span class="badge badge-maal">@Model.Rounds.Count rounds</span>
+</div>
+<div class="d-flex align-center justify-between mb-2">
+    <span class="text-muted" style="font-size:0.85rem;">@Model.Game?.TimeStamp.ToString("MMM dd, yyyy")</span>
+    @if (Model.Rounds.Any())
+    {
+        <span style="font-size:0.85rem; font-weight:700;" class="@(topPointsHeader > 0 ? "points-positive" : topPointsHeader < 0 ? "points-negative" : "points-zero")">
+            Best: @(topPointsHeader > 0 ? "+" : "")@topPointsHeader
+        </span>
+    }
+</div>
+
+<a asp-page="/Play" asp-route-gameId="@Model.GameId" class="btn btn-primary btn-block btn-lg mb-2">
+    + New Round
+</a>
+
+<!-- Leaderboard -->
+<div class="card">
+    <div class="card-title">Standings</div>
+    @{
+        var sorted = Model.Players
+            .OrderByDescending(p => Model.PlayerTotals.GetValueOrDefault(p.Id, 0))
+            .ToList();
+    }
+    @for (int i = 0; i < sorted.Count; i++)
+    {
+        var player = sorted[i];
+        var total = Model.PlayerTotals.GetValueOrDefault(player.Id, 0);
+        var rank = i + 1;
+        <div class="leaderboard-item">
+            <div class="leaderboard-rank @(rank == 1 ? "rank-1" : rank == 2 ? "rank-2" : rank == 3 ? "rank-3" : "rank-other")">
+                @rank
+            </div>
+            <div class="leaderboard-name">@player.Name</div>
+            <div class="leaderboard-points @(total > 0 ? "points-positive" : total < 0 ? "points-negative" : "points-zero")">
+                @(total > 0 ? "+" : "")@total
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.Rounds.Any())
+{
+    <!-- Round Details - Card layout (mobile) -->
+    <div class="section-title">Round Details</div>
+    <div class="round-cards">
+        @foreach (var round in Model.Rounds)
+        {
+            <div class="round-card">
+                <div class="round-card-header">
+                    <span class="round-num">@round.Number</span>
+                    @if (Model.Game!.AllowRoundDeletion)
+                    {
+                        <form method="post" asp-page-handler="DeleteRound" style="display:inline; margin-left:auto;">
+                            <input type="hidden" name="GameId" value="@Model.GameId" />
+                            <input type="hidden" name="roundId" value="@round.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Delete round @round.Number?')"
+                                    style="padding:2px 8px; font-size:0.7rem;">
+                                &times;
+                            </button>
+                        </form>
+                    }
+                </div>
+                <div class="round-card-players">
+                    @foreach (var player in Model.Players)
+                    {
+                        var rp = round.RoundPlayers.FirstOrDefault(x => x.PlayerId == player.Id);
+                        <div class="round-card-player">
+                            <span class="round-card-name">@player.Name</span>
+                            <span class="round-card-detail">
+                                @if (rp != null && !rp.SkippedRound)
+                                {
+                                    <span class="round-card-badges">
+                                        @if (round.WinnerId == player.Id)
+                                        {<span class="badge badge-winner">W</span>}
+                                        @if (rp.Seen)
+                                        {<span class="badge badge-seen">S</span>}
+                                        else if (round.WinnerId != player.Id)
+                                        {<span class="badge badge-unseen">U</span>}
+                                        @if (rp.Dubli)
+                                        {<span class="badge badge-dublee">D</span>}
+                                        @if (rp.Maal > 0)
+                                        {<span class="badge badge-maal">@rp.Maal m</span>}
+                                        @if (round.FoulPlayerId == player.Id)
+                                        {<span class="badge badge-foul">F</span>}
+                                    </span>
+                                    <span class="round-card-points @(rp.Points > 0 ? "points-positive" : rp.Points < 0 ? "points-negative" : "points-zero")">
+                                        @(rp.Points > 0 ? "+" : "")@rp.Points
+                                    </span>
+                                }
+                                else if (rp != null && rp.SkippedRound)
+                                {
+                                    <span class="badge badge-skip">SKIP</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<a asp-page="/Index" class="btn btn-secondary btn-block mt-1">Back to Home</a>
+
+<!-- Legend -->
+<div class="card mt-2" style="padding: 12px 14px;">
+    <div style="font-size:0.75rem; color: var(--text-muted); display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+        <strong>Legend:</strong>
+        <span><span class="badge badge-winner">W</span> Win</span>
+        <span><span class="badge badge-seen">S</span> Seen</span>
+        <span><span class="badge badge-unseen">U</span> Unseen</span>
+        <span><span class="badge badge-dublee">D</span> Dublee</span>
+        <span><span class="badge badge-maal">m</span> Maal</span>
+        <span><span class="badge badge-foul">F</span> Foul</span>
+    </div>
+</div>

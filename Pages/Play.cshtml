@@ -1,0 +1,189 @@
+@page
+@model PlayModel
+@{
+    ViewData["Title"] = $"Round {Model.NextRoundNumber}";
+    ViewData["BodyClass"] = "has-bottom-bar";
+}
+
+<div class="d-flex align-center justify-between mb-2">
+    <h1 class="card-title" style="font-size:1.4rem; margin:0;">Round @Model.NextRoundNumber</h1>
+    <a asp-page="/Scoreboard" asp-route-gameId="@Model.GameId" class="btn btn-sm btn-secondary">Scoreboard</a>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<form method="post" id="playForm">
+    <input type="hidden" name="GameId" value="@Model.GameId" />
+
+    <!-- Winner Selection -->
+    <div class="section-title">Winner</div>
+    <div class="card">
+        <div class="winner-select">
+            @foreach (var player in Model.Players)
+            {
+                <label class="winner-option" id="winner-@player.Id">
+                    <input type="radio" name="WinnerId" value="@player.Id"
+                           @(Model.WinnerId == player.Id ? "checked" : "")
+                           onchange="selectWinner(@player.Id)" />
+                    @player.Name
+                </label>
+            }
+        </div>
+    </div>
+
+    <!-- Dublee Win Toggle -->
+    <div class="card">
+        <label class="toggle-btn" id="dubleeToggle" style="display:block; width:100%;">
+            <input type="checkbox" name="DubleeWin" value="true" @(Model.DubleeWin ? "checked" : "")
+                   onchange="this.parentElement.classList.toggle('active', this.checked)" />
+            Won with 8 Dublees (+5 from each)
+        </label>
+    </div>
+
+    <!-- Player Details -->
+    <div class="section-title">Player Details</div>
+
+    @foreach (var player in Model.Players)
+    {
+        <div class="player-entry" id="player-entry-@player.Id">
+            <div class="player-name">
+                <span>@player.Name</span>
+                <span class="badge badge-winner" id="winner-badge-@player.Id" style="display:none;">WINNER</span>
+            </div>
+            <div class="player-controls">
+                <div>
+                    <span class="control-label">Status</span>
+                    <div class="toggle-group">
+                        <label class="toggle-btn" id="seen-btn-@player.Id"
+                               onclick="toggleSeen(@player.Id)">
+                            Seen
+                        </label>
+                        <label class="toggle-btn" id="skip-btn-@player.Id"
+                               onclick="toggleSkip(@player.Id)">
+                            Skip
+                        </label>
+                    </div>
+                    <input type="hidden" name="SeenValues[@player.Id]" id="seen-input-@player.Id" value="false" />
+                    <input type="hidden" name="SkippedValues[@player.Id]" id="skip-input-@player.Id" value="false" />
+                </div>
+                <div id="maal-section-@player.Id">
+                    <span class="control-label">Maal</span>
+                    <div class="number-control">
+                        <button type="button" class="btn-num" onclick="changeMaal(@player.Id, -1)">-</button>
+                        <input type="number" name="MaalValues[@player.Id]" id="maal-@player.Id"
+                               value="@(Model.MaalValues.GetValueOrDefault(player.Id, 0) == 0 ? "" : Model.MaalValues.GetValueOrDefault(player.Id, 0))"
+                               min="0" placeholder="0"
+                               onchange="clampMaal(@player.Id)" />
+                        <button type="button" class="btn-num" onclick="changeMaal(@player.Id, 1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Foul Player -->
+    <div class="section-title">Foul (optional)</div>
+    <div class="card">
+        <select class="form-control" name="FoulPlayerId">
+            <option value="0">No foul</option>
+            @foreach (var player in Model.Players)
+            {
+                <option value="@player.Id">@player.Name</option>
+            }
+        </select>
+    </div>
+
+    <!-- Submit -->
+    <div class="bottom-bar">
+        <button type="submit" class="btn btn-success btn-block btn-lg">
+            Save Round @Model.NextRoundNumber
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+<script>
+    // Winner selection
+    function selectWinner(playerId) {
+        document.querySelectorAll('.winner-option').forEach(el => el.classList.remove('selected'));
+        document.getElementById('winner-' + playerId).classList.add('selected');
+        // Show winner badges
+        document.querySelectorAll('[id^=winner-badge-]').forEach(el => el.style.display = 'none');
+        document.getElementById('winner-badge-' + playerId).style.display = 'inline-flex';
+        // Winner is always seen
+        setSeen(playerId, true);
+        setSkip(playerId, false);
+    }
+
+    // Seen toggle
+    function toggleSeen(playerId) {
+        const input = document.getElementById('seen-input-' + playerId);
+        const btn = document.getElementById('seen-btn-' + playerId);
+        const current = input.value === 'true';
+        setSeen(playerId, !current);
+        if (!current) setSkip(playerId, false);
+    }
+
+    function setSeen(playerId, value) {
+        document.getElementById('seen-input-' + playerId).value = value;
+        const btn = document.getElementById('seen-btn-' + playerId);
+        btn.classList.toggle('active', value);
+        // Show/hide maal section based on seen
+        const maalSection = document.getElementById('maal-section-' + playerId);
+        if (maalSection) {
+            maalSection.style.display = value ? '' : 'none';
+        }
+    }
+
+    // Skip toggle
+    function toggleSkip(playerId) {
+        const input = document.getElementById('skip-input-' + playerId);
+        const btn = document.getElementById('skip-btn-' + playerId);
+        const current = input.value === 'true';
+        setSkip(playerId, !current);
+        if (!current) setSeen(playerId, false);
+    }
+
+    function setSkip(playerId, value) {
+        document.getElementById('skip-input-' + playerId).value = value;
+        const btn = document.getElementById('skip-btn-' + playerId);
+        btn.classList.toggle('active', value);
+        // Dim the player entry if skipped
+        const entry = document.getElementById('player-entry-' + playerId);
+        entry.style.opacity = value ? '0.4' : '1';
+    }
+
+    // Maal counter
+    function changeMaal(playerId, delta) {
+        const input = document.getElementById('maal-' + playerId);
+        let val = parseInt(input.value) || 0;
+        val = Math.max(0, val + delta);
+        input.value = val || '';
+    }
+
+    function clampMaal(playerId) {
+        const input = document.getElementById('maal-' + playerId);
+        let val = parseInt(input.value) || 0;
+        val = Math.max(0, val);
+        input.value = val || '';
+    }
+
+    // Init: hide maal for unseen players, check initial winner
+    document.addEventListener('DOMContentLoaded', function() {
+        @foreach (var player in Model.Players)
+        {
+            <text>setSeen(@player.Id, @(Model.SeenValues.GetValueOrDefault(player.Id, false) ? "true" : "false"));</text>
+            <text>setSkip(@player.Id, @(Model.SkippedValues.GetValueOrDefault(player.Id, false) ? "true" : "false"));</text>
+        }
+        if (document.querySelector('input[name="WinnerId"]:checked')) {
+            selectWinner(parseInt(document.querySelector('input[name="WinnerId"]:checked').value));
+        }
+        // Dublee toggle init
+        const dub = document.querySelector('#dubleeToggle input');
+        if (dub && dub.checked) document.getElementById('dubleeToggle').classList.add('active');
+    });
+</script>
+}
