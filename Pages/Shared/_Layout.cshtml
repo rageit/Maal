@@ -7,11 +7,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>@ViewData["Title"] - Maal</title>
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" />
+    <link rel="apple-touch-icon" href="~/favicon.svg" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="@ViewData["BodyClass"]">
     <header class="app-header">
-        <a class="app-logo" asp-page="/Index">MAAL</a>
+        <a class="app-logo" asp-page="/Index"><span class="app-logo-icon">&#9824;</span> MAAL</a>
         <nav class="app-nav">
             <a asp-page="/Index">Home</a>
             <a asp-page="/Games">History</a>

@@ -54,6 +54,13 @@ body {
     color: var(--accent-light);
     text-decoration: none;
     letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.app-logo-icon {
+    font-size: 1.2rem;
 }
 
 .app-nav {
@@ -391,12 +398,15 @@ select.form-control {
 
 .scoreboard th:first-child,
 .scoreboard td:first-child {
-    text-align: left;
+    text-align: center;
     position: sticky;
     left: 0;
     background: var(--bg-card);
     z-index: 1;
     font-weight: 600;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: 36px;
 }
 
 .scoreboard th:first-child {
@@ -735,14 +745,14 @@ select.form-control {
 
 /* Round Number Circle */
 .round-num {
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     background: var(--bg-input);
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: var(--text-secondary);
 }
