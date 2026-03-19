@@ -10,6 +10,7 @@ namespace Maal.Pages;
 public class PlayModel : PageModel
 {
     private readonly MaalContext _context;
+    private readonly IUserIdentificationService _userService;
 
     [BindProperty(SupportsGet = true)]
     public int GameId { get; set; }
@@ -38,9 +39,10 @@ public class PlayModel : PageModel
 
     public string? ErrorMessage { get; set; }
 
-    public PlayModel(MaalContext context)
+    public PlayModel(MaalContext context, IUserIdentificationService userService)
     {
         _context = context;
+        _userService = userService;
     }
 
     public IActionResult OnGet()
@@ -118,8 +120,9 @@ public class PlayModel : PageModel
 
     private IActionResult LoadPage()
     {
+        var userId = _userService.GetUserId(HttpContext);
         Game = _context.Games.Find(GameId);
-        if (Game == null)
+        if (Game == null || Game.UserId != userId)
             return RedirectToPage("/Index");
 
         Players = _context.Players

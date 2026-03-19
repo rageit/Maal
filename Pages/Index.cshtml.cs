@@ -1,5 +1,6 @@
 using Maal.Data;
 using Maal.Models;
+using Maal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,20 +10,25 @@ namespace Maal.Pages;
 public class IndexModel : PageModel
 {
     private readonly MaalContext _context;
+    private readonly IUserIdentificationService _userService;
 
     public Game? CurrentGame { get; set; }
     public List<Player> Players { get; set; } = new();
     public int TotalRounds { get; set; }
     public Dictionary<int, int> PlayerTotals { get; set; } = new();
 
-    public IndexModel(MaalContext context)
+    public IndexModel(MaalContext context, IUserIdentificationService userService)
     {
         _context = context;
+        _userService = userService;
     }
 
     public void OnGet()
     {
+        var userId = _userService.GetUserId(HttpContext);
+
         CurrentGame = _context.Games
+            .Where(g => g.UserId == userId)
             .OrderByDescending(g => g.TimeStamp)
             .FirstOrDefault();
 

@@ -1,5 +1,6 @@
 using Maal.Data;
 using Maal.Models;
+using Maal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,19 +10,24 @@ namespace Maal.Pages;
 public class GamesModel : PageModel
 {
     private readonly MaalContext _context;
+    private readonly IUserIdentificationService _userService;
 
     public List<Game> Games { get; set; } = new();
     public Dictionary<int, int> RoundCounts { get; set; } = new();
     public Dictionary<int, List<string>> GamePlayers { get; set; } = new();
 
-    public GamesModel(MaalContext context)
+    public GamesModel(MaalContext context, IUserIdentificationService userService)
     {
         _context = context;
+        _userService = userService;
     }
 
     public void OnGet()
     {
+        var userId = _userService.GetUserId(HttpContext);
+
         Games = _context.Games
+            .Where(g => g.UserId == userId)
             .OrderByDescending(g => g.TimeStamp)
             .ToList();
 
@@ -37,8 +43,9 @@ public class GamesModel : PageModel
 
     public IActionResult OnPostDelete(int gameId)
     {
+        var userId = _userService.GetUserId(HttpContext);
         var game = _context.Games.Find(gameId);
-        if (game != null)
+        if (game != null && game.UserId == userId)
         {
             var rounds = _context.Rounds.Where(r => r.GameId == gameId).Include(r => r.RoundPlayers).ToList();
             foreach (var round in rounds)

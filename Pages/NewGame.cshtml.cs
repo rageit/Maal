@@ -1,5 +1,6 @@
 using Maal.Data;
 using Maal.Models;
+using Maal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,6 +9,7 @@ namespace Maal.Pages;
 public class NewGameModel : PageModel
 {
     private readonly MaalContext _context;
+    private readonly IUserIdentificationService _userService;
 
     [BindProperty]
     public string GameName { get; set; } = "";
@@ -20,9 +22,10 @@ public class NewGameModel : PageModel
 
     public string? ErrorMessage { get; set; }
 
-    public NewGameModel(MaalContext context)
+    public NewGameModel(MaalContext context, IUserIdentificationService userService)
     {
         _context = context;
+        _userService = userService;
     }
 
     public void OnGet()
@@ -62,7 +65,8 @@ public class NewGameModel : PageModel
         {
             Name = gameName,
             TimeStamp = DateTime.UtcNow,
-            AllowRoundDeletion = AllowRoundDeletion
+            AllowRoundDeletion = AllowRoundDeletion,
+            UserId = _userService.GetUserId(HttpContext)
         };
         _context.Games.Add(game);
         _context.SaveChanges();

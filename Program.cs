@@ -12,6 +12,7 @@ builder.Services.AddDbContext<MaalContext>(options =>
         builder.Configuration.GetConnectionString("MaalContext")
         ?? throw new InvalidOperationException("Connection string 'MaalContext' not found.")));
 builder.Services.AddTransient<IAppSettingsProvider, AppSettingsProvider>();
+builder.Services.AddSingleton<IUserIdentificationService, UserIdentificationService>();
 
 var app = builder.Build();
 
