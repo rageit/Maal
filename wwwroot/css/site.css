@@ -428,6 +428,71 @@ select.form-control {
     font-size: 1rem;
 }
 
+/* Round Cards (mobile-friendly round details) */
+.round-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.round-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.round-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.round-card-players {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.round-card-player {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 28px;
+}
+
+.round-card-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.round-card-detail {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.round-card-badges {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+}
+
+.round-card-points {
+    font-size: 0.95rem;
+    font-weight: 800;
+    min-width: 36px;
+    text-align: right;
+}
+
 /* Points Display */
 .points-positive {
     color: var(--success);
