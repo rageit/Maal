@@ -74,7 +74,8 @@
                     <div class="number-control">
                         <button type="button" class="btn-num" onclick="changeMaal(@player.Id, -1)">-</button>
                         <input type="number" name="MaalValues[@player.Id]" id="maal-@player.Id"
-                               value="@Model.MaalValues.GetValueOrDefault(player.Id, 0)" min="0"
+                               value="@(Model.MaalValues.GetValueOrDefault(player.Id, 0) == 0 ? "" : Model.MaalValues.GetValueOrDefault(player.Id, 0))"
+                               min="0" placeholder="0"
                                onchange="clampMaal(@player.Id)" />
                         <button type="button" class="btn-num" onclick="changeMaal(@player.Id, 1)">+</button>
                     </div>
@@ -160,13 +161,14 @@
         const input = document.getElementById('maal-' + playerId);
         let val = parseInt(input.value) || 0;
         val = Math.max(0, val + delta);
-        input.value = val;
+        input.value = val || '';
     }
 
     function clampMaal(playerId) {
         const input = document.getElementById('maal-' + playerId);
         let val = parseInt(input.value) || 0;
-        input.value = Math.max(0, val);
+        val = Math.max(0, val);
+        input.value = val || '';
     }
 
     // Init: hide maal for unseen players, check initial winner
