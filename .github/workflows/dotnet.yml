@@ -26,6 +26,8 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Azure Login
+      uses: Azure/login@v3.0.0
     - name: Azure WebApp
       uses: Azure/webapps-deploy@v3.0.5
       with:
