@@ -26,3 +26,10 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Azure WebApp
+      uses: Azure/webapps-deploy@v3.0.5
+      with:
+        # Name of the Azure Web App
+        app-name: Maal
+        # Applies to Web Apps(Windows and Linux) and Web App Containers(linux). Multi container scenario not supported. Publish profile (*.publishsettings) file contents with Web Deploy secrets
+          
