@@ -83,6 +83,16 @@ body {
     color: var(--text-primary);
 }
 
+.app-nav a.app-nav-new {
+    background: var(--accent);
+    color: white;
+    font-weight: 600;
+}
+
+.app-nav a.app-nav-new:hover {
+    background: var(--accent-light);
+}
+
 .app-content {
     padding: 12px;
     max-width: 900px;
