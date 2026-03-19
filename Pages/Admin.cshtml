@@ -26,7 +26,7 @@
 
             @foreach (var item in group.Games)
             {
-                <div class="game-item" style="margin-bottom:8px;">
+                <a asp-page="/Scoreboard" asp-route-gameId="@item.Game.Id" asp-route-admin="true" class="game-item" style="margin-bottom:8px;">
                     <div class="game-item-info">
                         <div class="game-name">@item.Game.Name</div>
                         <div class="game-meta">
@@ -35,7 +35,8 @@
                             @string.Join(", ", item.PlayerNames)
                         </div>
                     </div>
-                </div>
+                    <div class="game-item-arrow">&#8250;</div>
+                </a>
             }
         </div>
     }

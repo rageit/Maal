@@ -15,6 +15,11 @@ public class ScoreboardModel : PageModel
     [BindProperty(SupportsGet = true)]
     public int GameId { get; set; }
 
+    [BindProperty(SupportsGet = true)]
+    public bool Admin { get; set; }
+
+    public bool IsAdminView { get; set; }
+
     public Game? Game { get; set; }
     public List<Player> Players { get; set; } = new();
     public List<Round> Rounds { get; set; } = new();
@@ -28,10 +33,20 @@ public class ScoreboardModel : PageModel
 
     public IActionResult OnGet()
     {
-        var userId = _userService.GetUserId(HttpContext);
         Game = _context.Games.Find(GameId);
-        if (Game == null || Game.UserId != userId)
+        if (Game == null)
             return RedirectToPage("/Index");
+
+        if (Admin)
+        {
+            IsAdminView = true;
+        }
+        else
+        {
+            var userId = _userService.GetUserId(HttpContext);
+            if (Game.UserId != userId)
+                return RedirectToPage("/Index");
+        }
 
         Players = _context.Players
             .Where(p => p.GameId == GameId)
