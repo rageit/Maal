@@ -24,9 +24,12 @@
     }
 </div>
 
-<a asp-page="/Play" asp-route-gameId="@Model.GameId" class="btn btn-primary btn-block btn-lg mb-2">
-    + New Round
-</a>
+@if (!Model.IsAdminView)
+{
+    <a asp-page="/Play" asp-route-gameId="@Model.GameId" class="btn btn-primary btn-block btn-lg mb-2">
+        + New Round
+    </a>
+}
 
 <!-- Leaderboard -->
 <div class="card">
@@ -63,7 +66,7 @@
             <div class="round-card">
                 <div class="round-card-header">
                     <span class="round-num">@round.Number</span>
-                    @if (Model.Game!.AllowRoundDeletion)
+                    @if (!Model.IsAdminView && Model.Game!.AllowRoundDeletion)
                     {
                         <form method="post" asp-page-handler="DeleteRound" style="display:inline; margin-left:auto;">
                             <input type="hidden" name="GameId" value="@Model.GameId" />
@@ -120,7 +123,14 @@
     </div>
 }
 
-<a asp-page="/Index" class="btn btn-secondary btn-block mt-1">Back to Home</a>
+@if (Model.IsAdminView)
+{
+    <a asp-page="/Admin" class="btn btn-secondary btn-block mt-1">Back to Admin</a>
+}
+else
+{
+    <a asp-page="/Index" class="btn btn-secondary btn-block mt-1">Back to Home</a>
+}
 
 <!-- Legend -->
 <div class="card mt-2" style="padding: 12px 14px;">

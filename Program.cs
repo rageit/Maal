@@ -7,11 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<MaalContext>(options => 
+builder.Services.AddDbContext<MaalContext>(options =>
     options.UseSqlite(
         builder.Configuration.GetConnectionString("MaalContext")
         ?? throw new InvalidOperationException("Connection string 'MaalContext' not found.")));
 builder.Services.AddTransient<IAppSettingsProvider, AppSettingsProvider>();
+builder.Services.AddSingleton<IUserIdentificationService, UserIdentificationService>();
 
 var app = builder.Build();
 

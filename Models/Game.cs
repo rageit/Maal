@@ -12,4 +12,6 @@ public class Game
     public DateTime TimeStamp { get; set; }
 
     public bool AllowRoundDeletion { get; set; } = true;
+
+    public string UserId { get; set; } = default!;
 }

@@ -1,5 +1,6 @@
 using Maal.Data;
 using Maal.Models;
+using Maal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,18 +10,25 @@ namespace Maal.Pages;
 public class ScoreboardModel : PageModel
 {
     private readonly MaalContext _context;
+    private readonly IUserIdentificationService _userService;
 
     [BindProperty(SupportsGet = true)]
     public int GameId { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public bool Admin { get; set; }
+
+    public bool IsAdminView { get; set; }
 
     public Game? Game { get; set; }
     public List<Player> Players { get; set; } = new();
     public List<Round> Rounds { get; set; } = new();
     public Dictionary<int, int> PlayerTotals { get; set; } = new();
 
-    public ScoreboardModel(MaalContext context)
+    public ScoreboardModel(MaalContext context, IUserIdentificationService userService)
     {
         _context = context;
+        _userService = userService;
     }
 
     public IActionResult OnGet()
@@ -28,6 +36,17 @@ public class ScoreboardModel : PageModel
         Game = _context.Games.Find(GameId);
         if (Game == null)
             return RedirectToPage("/Index");
+
+        if (Admin)
+        {
+            IsAdminView = true;
+        }
+        else
+        {
+            var userId = _userService.GetUserId(HttpContext);
+            if (Game.UserId != userId)
+                return RedirectToPage("/Index");
+        }
 
         Players = _context.Players
             .Where(p => p.GameId == GameId)
@@ -53,8 +72,9 @@ public class ScoreboardModel : PageModel
 
     public IActionResult OnPostDeleteRound(int roundId)
     {
+        var userId = _userService.GetUserId(HttpContext);
         var game = _context.Games.Find(GameId);
-        if (game == null || !game.AllowRoundDeletion)
+        if (game == null || game.UserId != userId || !game.AllowRoundDeletion)
             return RedirectToPage(new { gameId = GameId });
 
         var round = _context.Rounds
