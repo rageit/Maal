@@ -4,11 +4,25 @@
     ViewData["Title"] = Model.Game?.Name ?? "Scoreboard";
 }
 
+@{
+    var topPlayerHeader = Model.Players
+        .OrderByDescending(p => Model.PlayerTotals.GetValueOrDefault(p.Id, 0))
+        .FirstOrDefault();
+    var topPointsHeader = topPlayerHeader != null ? Model.PlayerTotals.GetValueOrDefault(topPlayerHeader.Id, 0) : 0;
+}
 <div class="d-flex align-center justify-between mb-1">
     <h1 class="card-title" style="font-size:1.3rem; margin:0;">@Model.Game?.Name</h1>
     <span class="badge badge-maal">@Model.Rounds.Count rounds</span>
 </div>
-<p class="text-muted mb-2" style="font-size:0.85rem;">@Model.Game?.TimeStamp.ToString("MMM dd, yyyy")</p>
+<div class="d-flex align-center justify-between mb-2">
+    <span class="text-muted" style="font-size:0.85rem;">@Model.Game?.TimeStamp.ToString("MMM dd, yyyy")</span>
+    @if (Model.Rounds.Any())
+    {
+        <span style="font-size:0.85rem; font-weight:700;" class="@(topPointsHeader > 0 ? "points-positive" : topPointsHeader < 0 ? "points-negative" : "points-zero")">
+            Best: @(topPointsHeader > 0 ? "+" : "")@topPointsHeader
+        </span>
+    }
+</div>
 
 <!-- Leaderboard -->
 <div class="card">
@@ -35,24 +49,8 @@
     }
 </div>
 
-<!-- Stats -->
 @if (Model.Rounds.Any())
 {
-    <div class="stat-grid mb-2">
-        <div class="stat-item">
-            <div class="stat-value">@Model.Rounds.Count</div>
-            <div class="stat-label">Rounds</div>
-        </div>
-        <div class="stat-item">
-            @{
-                var topPlayer = sorted.FirstOrDefault();
-                var topPoints = topPlayer != null ? Model.PlayerTotals.GetValueOrDefault(topPlayer.Id, 0) : 0;
-            }
-            <div class="stat-value points-positive">@(topPoints > 0 ? "+" : "")@topPoints</div>
-            <div class="stat-label">Best Score</div>
-        </div>
-    </div>
-
     <!-- Round-by-Round Table -->
     <div class="section-title">Round Details</div>
     <div class="card" style="padding: 0; overflow: hidden;">
@@ -173,14 +171,14 @@
 <a asp-page="/Index" class="btn btn-secondary btn-block mt-1">Back to Home</a>
 
 <!-- Legend -->
-<div class="card mt-2" style="padding: 14px 18px;">
-    <div style="font-size:0.8rem; color: var(--text-muted);">
+<div class="card mt-2" style="padding: 12px 14px;">
+    <div style="font-size:0.75rem; color: var(--text-muted); display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
         <strong>Legend:</strong>
-        <span class="badge badge-winner">W</span> Winner
-        <span class="badge badge-seen">S</span> Seen
-        <span class="badge badge-unseen">U</span> Unseen
-        <span class="badge badge-dublee">D</span> Dublee
-        <span class="badge badge-maal">m</span> Maal pts
-        <span class="badge badge-foul">F</span> Foul
+        <span><span class="badge badge-winner">W</span> Win</span>
+        <span><span class="badge badge-seen">S</span> Seen</span>
+        <span><span class="badge badge-unseen">U</span> Unseen</span>
+        <span><span class="badge badge-dublee">D</span> Dublee</span>
+        <span><span class="badge badge-maal">m</span> Maal</span>
+        <span><span class="badge badge-foul">F</span> Foul</span>
     </div>
 </div>
