@@ -85,7 +85,7 @@ body {
 
 .app-content {
     padding: 12px;
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
@@ -855,7 +855,7 @@ select.form-control {
 }
 
 .bottom-bar .btn {
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto;
 }
 
@@ -883,10 +883,24 @@ select.form-control {
 
 @media (min-width: 768px) {
     .app-content {
-        padding: 24px;
+        padding: 24px 32px;
     }
 
     .hero-title {
         font-size: 3rem;
+    }
+
+    .winner-select {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+
+    .leaderboard-points {
+        font-size: 1.3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .app-content {
+        padding: 32px 40px;
     }
 }
