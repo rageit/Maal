@@ -1,0 +1,92 @@
+@page
+@model NewGameModel
+@{
+    ViewData["Title"] = "New Game";
+}
+
+<h1 class="card-title" style="font-size:1.4rem; margin-bottom:4px;">New Game</h1>
+<p class="text-muted mb-2" style="font-size:0.9rem;">Set up a new Marriage card game session</p>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<form method="post" id="newGameForm">
+    <div class="card">
+        <div class="form-group">
+            <label class="form-label">Game Name (optional)</label>
+            <input type="text" class="form-control" name="GameName" value="@Model.GameName"
+                   placeholder="e.g. Dashain Night Game" />
+        </div>
+    </div>
+
+    <div class="section-title">Players (2-5)</div>
+
+    <div id="playerList">
+        @for (int i = 0; i < Model.PlayerNames.Count; i++)
+        {
+            <div class="player-input-row" data-index="@i">
+                <div class="player-num">@(i + 1)</div>
+                <input type="text" class="form-control" name="PlayerNames[@i]"
+                       value="@Model.PlayerNames[i]" placeholder="Player @(i + 1) name" required />
+                @if (i >= 2)
+                {
+                    <button type="button" class="btn-remove" onclick="removePlayer(this)">&times;</button>
+                }
+            </div>
+        }
+    </div>
+
+    <button type="button" class="btn btn-secondary btn-block mt-1" id="addPlayerBtn" onclick="addPlayer()">
+        + Add Player
+    </button>
+
+    <button type="submit" class="btn btn-success btn-block btn-lg mt-3">
+        Start Game
+    </button>
+</form>
+
+@section Scripts {
+<script>
+    let playerCount = document.querySelectorAll('.player-input-row').length;
+
+    function addPlayer() {
+        if (playerCount >= 5) return;
+        const list = document.getElementById('playerList');
+        const idx = playerCount;
+        const div = document.createElement('div');
+        div.className = 'player-input-row';
+        div.dataset.index = idx;
+        div.innerHTML = `
+            <div class="player-num">${idx + 1}</div>
+            <input type="text" class="form-control" name="PlayerNames[${idx}]" placeholder="Player ${idx + 1} name" required />
+            <button type="button" class="btn-remove" onclick="removePlayer(this)">&times;</button>
+        `;
+        list.appendChild(div);
+        playerCount++;
+        updateAddButton();
+    }
+
+    function removePlayer(btn) {
+        const row = btn.closest('.player-input-row');
+        row.remove();
+        playerCount--;
+        // Re-index
+        document.querySelectorAll('.player-input-row').forEach((row, i) => {
+            row.dataset.index = i;
+            row.querySelector('.player-num').textContent = i + 1;
+            const input = row.querySelector('input');
+            input.name = `PlayerNames[${i}]`;
+            input.placeholder = `Player ${i + 1} name`;
+        });
+        updateAddButton();
+    }
+
+    function updateAddButton() {
+        const btn = document.getElementById('addPlayerBtn');
+        btn.style.display = playerCount >= 5 ? 'none' : 'flex';
+    }
+    updateAddButton();
+</script>
+}

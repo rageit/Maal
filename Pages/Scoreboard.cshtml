@@ -1,0 +1,173 @@
+@page
+@model ScoreboardModel
+@{
+    ViewData["Title"] = Model.Game?.Name ?? "Scoreboard";
+}
+
+<div class="d-flex align-center justify-between mb-1">
+    <h1 class="card-title" style="font-size:1.3rem; margin:0;">@Model.Game?.Name</h1>
+    <span class="badge badge-maal">@Model.Rounds.Count rounds</span>
+</div>
+<p class="text-muted mb-2" style="font-size:0.85rem;">@Model.Game?.TimeStamp.ToString("MMM dd, yyyy")</p>
+
+<!-- Leaderboard -->
+<div class="card">
+    <div class="card-title">Standings</div>
+    @{
+        var sorted = Model.Players
+            .OrderByDescending(p => Model.PlayerTotals.GetValueOrDefault(p.Id, 0))
+            .ToList();
+    }
+    @for (int i = 0; i < sorted.Count; i++)
+    {
+        var player = sorted[i];
+        var total = Model.PlayerTotals.GetValueOrDefault(player.Id, 0);
+        var rank = i + 1;
+        <div class="leaderboard-item">
+            <div class="leaderboard-rank @(rank == 1 ? "rank-1" : rank == 2 ? "rank-2" : rank == 3 ? "rank-3" : "rank-other")">
+                @rank
+            </div>
+            <div class="leaderboard-name">@player.Name</div>
+            <div class="leaderboard-points @(total > 0 ? "points-positive" : total < 0 ? "points-negative" : "points-zero")">
+                @(total > 0 ? "+" : "")@total
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Stats -->
+@if (Model.Rounds.Any())
+{
+    <div class="stat-grid mb-2">
+        <div class="stat-item">
+            <div class="stat-value">@Model.Rounds.Count</div>
+            <div class="stat-label">Rounds</div>
+        </div>
+        <div class="stat-item">
+            @{
+                var topPlayer = sorted.FirstOrDefault();
+                var topPoints = topPlayer != null ? Model.PlayerTotals.GetValueOrDefault(topPlayer.Id, 0) : 0;
+            }
+            <div class="stat-value points-positive">@(topPoints > 0 ? "+" : "")@topPoints</div>
+            <div class="stat-label">Best Score</div>
+        </div>
+    </div>
+
+    <!-- Round-by-Round Table -->
+    <div class="section-title">Round Details</div>
+    <div class="card" style="padding: 0; overflow: hidden;">
+        <div class="scoreboard">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        @foreach (var player in Model.Players)
+                        {
+                            <th>@player.Name</th>
+                        }
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var round in Model.Rounds)
+                    {
+                        <tr>
+                            <td><span class="round-num">@round.Number</span></td>
+                            @foreach (var player in Model.Players)
+                            {
+                                var rp = round.RoundPlayers.FirstOrDefault(x => x.PlayerId == player.Id);
+                                <td>
+                                    @if (rp != null && !rp.SkippedRound)
+                                    {
+                                        <span class="@(rp.Points > 0 ? "points-positive" : rp.Points < 0 ? "points-negative" : "points-zero")">
+                                            @(rp.Points > 0 ? "+" : "")@rp.Points
+                                        </span>
+                                        <br />
+                                        <span style="font-size:0.7rem;">
+                                            @if (round.WinnerId == player.Id)
+                                            {
+                                                <span class="badge badge-winner">W</span>
+                                            }
+                                            @if (rp.Seen)
+                                            {
+                                                <span class="badge badge-seen">S</span>
+                                            }
+                                            else if (round.WinnerId != player.Id)
+                                            {
+                                                <span class="badge badge-unseen">U</span>
+                                            }
+                                            @if (rp.Dubli)
+                                            {
+                                                <span class="badge badge-dublee">D</span>
+                                            }
+                                            @if (rp.Maal > 0)
+                                            {
+                                                <span class="badge badge-maal">@rp.Maal m</span>
+                                            }
+                                            @if (round.FoulPlayerId == player.Id)
+                                            {
+                                                <span class="badge badge-foul">F</span>
+                                            }
+                                        </span>
+                                    }
+                                    else if (rp != null && rp.SkippedRound)
+                                    {
+                                        <span class="badge badge-skip">SKIP</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                            }
+                            <td>
+                                <form method="post" asp-page-handler="DeleteRound" style="display:inline;">
+                                    <input type="hidden" name="GameId" value="@Model.GameId" />
+                                    <input type="hidden" name="roundId" value="@round.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Delete round @round.Number?')"
+                                            style="padding:4px 10px; font-size:0.75rem;">
+                                        &times;
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    <!-- Totals Row -->
+                    <tr class="total-row">
+                        <td>Total</td>
+                        @foreach (var player in Model.Players)
+                        {
+                            var total = Model.PlayerTotals.GetValueOrDefault(player.Id, 0);
+                            <td class="@(total > 0 ? "points-positive" : total < 0 ? "points-negative" : "points-zero")">
+                                @(total > 0 ? "+" : "")@total
+                            </td>
+                        }
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<!-- Actions -->
+<div class="btn-group mt-2">
+    <a asp-page="/Play" asp-route-gameId="@Model.GameId" class="btn btn-primary btn-lg flex-1">
+        + New Round
+    </a>
+</div>
+<a asp-page="/Index" class="btn btn-secondary btn-block mt-1">Back to Home</a>
+
+<!-- Legend -->
+<div class="card mt-2" style="padding: 14px 18px;">
+    <div style="font-size:0.8rem; color: var(--text-muted);">
+        <strong>Legend:</strong>
+        <span class="badge badge-winner">W</span> Winner
+        <span class="badge badge-seen">S</span> Seen
+        <span class="badge badge-unseen">U</span> Unseen
+        <span class="badge badge-dublee">D</span> Dublee
+        <span class="badge badge-maal">m</span> Maal pts
+        <span class="badge badge-foul">F</span> Foul
+    </div>
+</div>
