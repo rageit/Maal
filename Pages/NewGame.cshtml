@@ -42,6 +42,16 @@
         + Add Player
     </button>
 
+    <div class="section-title">Settings</div>
+    <div class="card">
+        <label class="toggle-btn" id="allowDeleteToggle" style="display:block; width:100%;">
+            <input type="checkbox" name="AllowRoundDeletion" value="true"
+                   @(Model.AllowRoundDeletion ? "checked" : "")
+                   onchange="this.parentElement.classList.toggle('active', this.checked)" />
+            Allow round deletion
+        </label>
+    </div>
+
     <button type="submit" class="btn btn-success btn-block btn-lg mt-3">
         Start Game
     </button>
@@ -88,5 +98,9 @@
         btn.style.display = playerCount >= 5 ? 'none' : 'flex';
     }
     updateAddButton();
+
+    // Init allow delete toggle
+    const delToggle = document.querySelector('#allowDeleteToggle input');
+    if (delToggle && delToggle.checked) document.getElementById('allowDeleteToggle').classList.add('active');
 </script>
 }

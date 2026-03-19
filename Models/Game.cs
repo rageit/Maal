@@ -10,4 +10,6 @@ public class Game
     [Display(Name = "Date")]
     [DisplayFormat(DataFormatString = "{0:d}")]
     public DateTime TimeStamp { get; set; }
+
+    public bool AllowRoundDeletion { get; set; } = true;
 }

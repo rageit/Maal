@@ -15,6 +15,9 @@ public class NewGameModel : PageModel
     [BindProperty]
     public List<string> PlayerNames { get; set; } = new() { "", "", "" };
 
+    [BindProperty]
+    public bool AllowRoundDeletion { get; set; } = true;
+
     public string? ErrorMessage { get; set; }
 
     public NewGameModel(MaalContext context)
@@ -58,7 +61,8 @@ public class NewGameModel : PageModel
         var game = new Game
         {
             Name = gameName,
-            TimeStamp = DateTime.UtcNow
+            TimeStamp = DateTime.UtcNow,
+            AllowRoundDeletion = AllowRoundDeletion
         };
         _context.Games.Add(game);
         _context.SaveChanges();

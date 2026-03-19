@@ -53,6 +53,10 @@ public class ScoreboardModel : PageModel
 
     public IActionResult OnPostDeleteRound(int roundId)
     {
+        var game = _context.Games.Find(GameId);
+        if (game == null || !game.AllowRoundDeletion)
+            return RedirectToPage(new { gameId = GameId });
+
         var round = _context.Rounds
             .Include(r => r.RoundPlayers)
             .FirstOrDefault(r => r.Id == roundId && r.GameId == GameId);

@@ -65,7 +65,10 @@
                         {
                             <th>@player.Name</th>
                         }
+                        @if (Model.Game!.AllowRoundDeletion)
+                        {
                         <th></th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -120,6 +123,8 @@
                                     }
                                 </td>
                             }
+                            @if (Model.Game!.AllowRoundDeletion)
+                            {
                             <td>
                                 <form method="post" asp-page-handler="DeleteRound" style="display:inline;">
                                     <input type="hidden" name="GameId" value="@Model.GameId" />
@@ -131,6 +136,11 @@
                                     </button>
                                 </form>
                             </td>
+                            }
+                            else
+                            {
+                            <td></td>
+                            }
                         </tr>
                     }
                     <!-- Totals Row -->
@@ -143,7 +153,10 @@
                                 @(total > 0 ? "+" : "")@total
                             </td>
                         }
+                        @if (Model.Game!.AllowRoundDeletion)
+                        {
                         <td></td>
+                        }
                     </tr>
                 </tbody>
             </table>
