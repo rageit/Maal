@@ -1,28 +1,18 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Maal.Data;
-using Maal.Filters;
 using Maal.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<AdStatusFilter>();
-builder.Services.AddRazorPages(options =>
-{
-    options.Conventions.AddFolderApplicationModelConvention("/", model =>
-    {
-        model.Filters.Add(new ServiceFilterAttribute(typeof(AdStatusFilter)));
-    });
-});
+builder.Services.AddRazorPages();
 builder.Services.AddDbContext<MaalContext>(options =>
     options.UseSqlite(
         builder.Configuration.GetConnectionString("MaalContext")
         ?? throw new InvalidOperationException("Connection string 'MaalContext' not found.")));
 builder.Services.AddTransient<IAppSettingsProvider, AppSettingsProvider>();
 builder.Services.AddSingleton<IUserIdentificationService, UserIdentificationService>();
-builder.Services.AddSingleton<IAdService, AdService>();
 
 var app = builder.Build();
 

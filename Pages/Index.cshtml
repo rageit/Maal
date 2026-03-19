@@ -63,11 +63,3 @@ else
         View All Games
     </a>
 }
-
-@if (ViewData["HideAds"] is not true)
-{
-    <div class="remove-ads-banner mt-2">
-        <span class="remove-ads-text">Enjoying Maal? Go ad-free for just $1.99</span>
-        <a asp-page="/RemoveAds" class="btn btn-sm btn-success">Remove Ads</a>
-    </div>
-}
