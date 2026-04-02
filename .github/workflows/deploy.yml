@@ -1,4 +1,4 @@
-name: Build and Deploy Maal Application
+name: Build and Deploy to Azure
 
 on:
   push:
@@ -7,8 +7,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -22,13 +23,14 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration Release --no-restore
 
     - name: Publish
-      run: dotnet publish -c Release -o ./output
+      run: dotnet publish -c Release -o ./publish
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./output
+        app-name: 'maal-game-calculator'
+        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+        package: ./publish
